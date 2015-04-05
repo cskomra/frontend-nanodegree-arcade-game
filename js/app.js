@@ -23,12 +23,21 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x = this.x + (dt * this.speed);
+    this.restart();
     this.render();
 }
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Enemy.prototype.restart = function() {
+    //alert(this.x);
+    if (this.x > 500) {
+        //alert("Enemy at " + String(this.x));
+        this.x = 0;
+    }
 }
 
 
@@ -117,12 +126,12 @@ Player.prototype.handleInput = function(key) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [];
-var enemy1 = new Enemy(50, 65, 20); //top lane
-var enemy2 = new Enemy(50, 145, 20); //middle lane
-var enemy3 = new Enemy(50, 225, 20); //bottom lane
+var enemy1 = new Enemy(0, 65, 50); //top lane
+//var enemy2 = new Enemy(0, 145, 20); //middle lane
+//var enemy3 = new Enemy(0, 225, 20); //bottom lane
 allEnemies[0] = enemy1;
-allEnemies[1] = enemy2;
-allEnemies[2] = enemy3;
+//allEnemies[1] = enemy2;
+//allEnemies[2] = enemy3;
 var player = new Player();
 
 //TODO: recycle memory from cleared enemies
