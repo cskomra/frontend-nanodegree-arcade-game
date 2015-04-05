@@ -42,6 +42,10 @@ var Engine = (function(global) {
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
+        //console.log("here3");
+        //console.log("dt");
+        //console.log(dt);
+
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
@@ -64,8 +68,10 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
+        //console.log("here1");
         reset();
         lastTime = Date.now();
+        //console.log(lastTime);
         main();
     }
 
@@ -79,6 +85,7 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
+        //console.log("here4");
         updateEntities(dt);
         // checkCollisions();
     }
@@ -91,8 +98,12 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
+        //console.log("here5");
+        //console.log(allEnemies);
         allEnemies.forEach(function(enemy) {
-            enemy.update(dt);
+            //console.log("here6");
+            //console.log(enemy);
+            enemy.update(dt);  //app.js
         });
         player.update();
     }
@@ -161,6 +172,7 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        //console.log("here2");
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -172,6 +184,7 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
+        'images/char-princess-girl.png',
         'images/char-boy.png'
     ]);
     Resources.onReady(init);
