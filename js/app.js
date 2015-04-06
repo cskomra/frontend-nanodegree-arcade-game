@@ -50,14 +50,15 @@ var Player = function() {
     this.x = 250 - Math.round((this.width / 2));
     this.y = 530 - (this.height - 50);
     this.livesRemaining = 3;
+    this.isWinner = false;
 }
 
 Player.prototype.update = function(dt) {
-    this.checkCollision(allEnemies);
+    this.checkGameStatus(allEnemies);
 }
 
 
-Player.prototype.checkCollision = function(allEnemies){
+Player.prototype.checkGameStatus = function(allEnemies){
     isCollision = false;
 
     for(i = 0; i < allEnemies.length; i++){
@@ -92,12 +93,25 @@ Player.prototype.checkCollision = function(allEnemies){
                 }
             }
         }
+        if (this.y < 77 && this.y >= -6) {
+            console.log("you made it!");
+            document.getElementById("game_status").innerHTML = "YOU WIN!";
+            this.isWinner = true;
+        }
     }
     if (isCollision == true) {
         this.x = 250 - Math.round((this.width / 2));
         this.y = 530 - (this.height - 50);
         console.log(this.livesRemaining);
         this.livesRemaining = this.livesRemaining-1;
+
+        if (this.livesRemaining == 0) {
+            //"GAME OVER"
+            document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
+            document.getElementById("game_status").innerHTML = "GAME OVER!";
+            return game_over;
+        }
+
         document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
     }
 
@@ -109,6 +123,9 @@ Player.prototype.render = function() {
 }
 
 Player.prototype.handleInput = function(key) {
+    if(this.isWinner == true) {
+        return;
+    }
     switch(key) {
         case 'left' :
             this.x -= 100;
@@ -220,7 +237,7 @@ function makeEnemies(allEnemies, level) {
 
     console.log(allEnemies);
 }
-makeEnemies(allEnemies, 2);
+makeEnemies(allEnemies, 1);
 
 var player = new Player();
 
