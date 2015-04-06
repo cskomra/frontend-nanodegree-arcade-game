@@ -23,7 +23,7 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x = this.x + (dt * this.speed);
-    this.restart();
+    this.restart(dt);
     this.render();
 }
 
@@ -33,9 +33,7 @@ Enemy.prototype.render = function() {
 }
 
 Enemy.prototype.restart = function() {
-    //alert(this.x);
     if (this.x > 500) {
-        //alert("Enemy at " + String(this.x));
         this.x = 0;
     }
 }
@@ -51,6 +49,7 @@ var Player = function() {
     this.height = 171;
     this.x = 250 - Math.round((this.width / 2));
     this.y = 530 - (this.height - 50);
+    this.livesRemaining = 3;
 }
 
 Player.prototype.update = function(dt) {
@@ -59,6 +58,7 @@ Player.prototype.update = function(dt) {
 
 
 Player.prototype.checkCollision = function(allEnemies){
+    isCollision = false;
 
     for(i = 0; i < allEnemies.length; i++){
 
@@ -68,9 +68,7 @@ Player.prototype.checkCollision = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
-                    //reset Player
-                    this.x = 250 - Math.round((this.width / 2));
-                    this.y = 530 - (this.height - 50);
+                    isCollision = true;
                 }
             }
         }
@@ -80,9 +78,7 @@ Player.prototype.checkCollision = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
-                    //reset Player
-                    this.x = 250 - Math.round((this.width / 2));
-                    this.y = 530 - (this.height - 50);
+                    isCollision = true;
                 }
             }
         }
@@ -92,13 +88,19 @@ Player.prototype.checkCollision = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
-                    //reset Player
-                    this.x = 250 - Math.round((this.width / 2));
-                    this.y = 530 - (this.height - 50);
+                    isCollision = true;
                 }
             }
         }
     }
+    if (isCollision == true) {
+        this.x = 250 - Math.round((this.width / 2));
+        this.y = 530 - (this.height - 50);
+        console.log(this.livesRemaining);
+        this.livesRemaining = this.livesRemaining-1;
+        document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
+    }
+
 }
 
 
@@ -125,18 +127,102 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+
 var allEnemies = [];
-var enemy1 = new Enemy(0, 65, 50); //top lane
-//var enemy2 = new Enemy(0, 145, 20); //middle lane
-//var enemy3 = new Enemy(0, 225, 20); //bottom lane
-allEnemies[0] = enemy1;
-//allEnemies[1] = enemy2;
-//allEnemies[2] = enemy3;
+
+function getLevelInfo(level) {
+    var levelInfo = {};
+
+    switch(level) {
+        case 1:
+            levelInfo = {
+                "topLane" : {
+                    "xLocs" : [100, 300],
+                    "yLoc" : 65,
+                    "speed" : 60
+                },
+                "middleLane" : {
+                    "xLocs" : [200, 400],
+                    "yLoc" : 145,
+                    "speed" : 20
+                },
+                "bottomLane" : {
+                    "xLocs" : [0, 100],
+                    "yLoc" : 225,
+                    "speed" : 40
+                }
+            }
+        break;
+        case 2:
+            levelInfo = {
+                "topLane" : {
+                    "xLocs" : [100, 300],
+                    "yLoc" : 65,
+                    "speed" : 70
+                },
+                "middleLane" : {
+                    "xLocs" : [200, 400],
+                    "yLoc" : 145,
+                    "speed" : 30
+                },
+                "bottomLane" : {
+                    "xLocs" : [0, 100],
+                    "yLoc" : 225,
+                    "speed" : 50
+                }
+            }
+        break;
+        case 3:
+            levelInfo = {
+                "topLane" : {
+                    "xLocs" : [100, 300],
+                    "yLoc" : 65,
+                    "speed" : 80
+                },
+                "middleLane" : {
+                    "xLocs" : [200, 400],
+                    "yLoc" : 145,
+                    "speed" : 40
+                },
+                "bottomLane" : {
+                    "xLocs" : [0, 100],
+                    "yLoc" : 225,
+                    "speed" : 60
+                }
+            }
+    }
+    console.log(levelInfo);
+    return levelInfo;
+}
+
+function makeEnemies(allEnemies, level) {
+    //make all names at the first
+    console.log("makeEnemies");
+    var levelInfo = getLevelInfo(level);
+    for (i = 0; i < levelInfo.topLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            levelInfo.topLane.xLocs[i],
+            levelInfo.topLane.yLoc,
+            levelInfo.topLane.speed);
+    }
+    for (i = 0; i < levelInfo.middleLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            levelInfo.middleLane.xLocs[i],
+            levelInfo.middleLane.yLoc,
+            levelInfo.middleLane.speed);
+    }
+    for (i = 0; i < levelInfo.bottomLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            levelInfo.bottomLane.xLocs[i],
+            levelInfo.bottomLane.yLoc,
+            levelInfo.bottomLane.speed);
+    }
+
+    console.log(allEnemies);
+}
+makeEnemies(allEnemies, 2);
+
 var player = new Player();
-
-//TODO: recycle memory from cleared enemies
-
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
