@@ -10,4 +10,5 @@ p {
 #game_status {
 	color: red;
 	font-size: 24px;
+	margin: 12px;
 }

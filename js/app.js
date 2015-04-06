@@ -64,8 +64,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
     for(i = 0; i < allEnemies.length; i++){
 
         if ((this.y < 326 && this.y >= 243) && (allEnemies[i].y + 50 < 326 && allEnemies[i].y + 50 >= 243) ) {
-            console.log("in bottom lane");
-            //compare x locations
+            //console.log("in bottom lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
@@ -74,8 +73,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             }
         }
         if ((this.y < 243 && this.y >= 160) && (allEnemies[i].y + 50 < 243 && allEnemies[i].y + 50 >= 160) ) {
-            console.log("in middle lane");
-            //compare x locations
+            //console.log("in middle lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
@@ -84,8 +82,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             }
         }
         if ((this.y < 160 && this.y >= 77) && (allEnemies[i].y + 50 < 160 && allEnemies[i].y + 50 >= 77) ) {
-            console.log("in top lane");
-            //compare x locations
+            //console.log("in top lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
@@ -93,28 +90,38 @@ Player.prototype.checkGameStatus = function(allEnemies){
                 }
             }
         }
-        if (this.y < 77 && this.y >= -6) {
-            console.log("you made it!");
-            document.getElementById("game_status").innerHTML = "YOU WIN!";
-            this.isWinner = true;
+        if (this.y < 77) {
+
+            if(gameLevel == 3) {
+                //console.log("you made it!");
+                document.getElementById("game_status").innerHTML = "YOU WIN!";
+                this.isWinner = true;
+            }else {
+                //up the level and restart player
+                gameLevel = gameLevel + 1;
+                document.getElementById("game_level").innerHTML = gameLevel;
+                this.x = 250 - Math.round((this.width / 2));
+                this.y = 530 - (this.height - 50);
+                allEnemies = [];
+                makeEnemies(allEnemies, gameLevel);
+            }
+
         }
     }
     if (isCollision == true) {
         this.x = 250 - Math.round((this.width / 2));
         this.y = 530 - (this.height - 50);
-        console.log(this.livesRemaining);
         this.livesRemaining = this.livesRemaining-1;
 
         if (this.livesRemaining == 0) {
             //"GAME OVER"
             document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
             document.getElementById("game_status").innerHTML = "GAME OVER!";
+            document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
             return game_over;
         }
-
         document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
     }
-
 }
 
 
@@ -144,12 +151,9 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
-var allEnemies = [];
-
 function getLevelInfo(level) {
     var levelInfo = {};
-
+    console.log("level = " + String(level));
     switch(level) {
         case 1:
             levelInfo = {
@@ -208,14 +212,13 @@ function getLevelInfo(level) {
                 }
             }
     }
-    console.log(levelInfo);
+    //console.log(levelInfo);
     return levelInfo;
 }
 
 function makeEnemies(allEnemies, level) {
-    //make all names at the first
-    console.log("makeEnemies");
     var levelInfo = getLevelInfo(level);
+
     for (i = 0; i < levelInfo.topLane.xLocs.length; i++) {
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.topLane.xLocs[i],
@@ -234,11 +237,11 @@ function makeEnemies(allEnemies, level) {
             levelInfo.bottomLane.yLoc,
             levelInfo.bottomLane.speed);
     }
-
-    console.log(allEnemies);
 }
-makeEnemies(allEnemies, 1);
 
+var gameLevel = 1;
+var allEnemies = [];
+makeEnemies(allEnemies, gameLevel);
 var player = new Player();
 
 // This listens for key presses and sends the keys to your
