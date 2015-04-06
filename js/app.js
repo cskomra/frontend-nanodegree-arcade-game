@@ -34,7 +34,7 @@ Enemy.prototype.render = function() {
 
 Enemy.prototype.restart = function() {
     if (this.x > 500) {
-        this.x = 0;
+        this.x = -100;
     }
 }
 
