@@ -95,6 +95,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             if(gameLevel == 3) {
                 //console.log("you made it!");
                 document.getElementById("game_status").innerHTML = "YOU WIN!";
+                document.getElementById("play_again").innerHTML = "<p>Refresh the page to play again.";
                 this.isWinner = true;
             }else {
                 //up the level and restart player
@@ -135,10 +136,20 @@ Player.prototype.handleInput = function(key) {
     }
     switch(key) {
         case 'left' :
+            if (this.x < 0){
+                //play bump sound & do nothing
+                console.log("Bump!");
+            }else{
             this.x -= 100;
+            }
             break;
         case 'right' :
-            this.x += 100;
+            if (this.x > 390){
+                //play bump sound & do nothing
+                console.log("Bump!");
+            }else{
+                this.x += 100;
+            }
             break;
         case 'up' :
             this.y -= 83;
@@ -153,7 +164,7 @@ Player.prototype.handleInput = function(key) {
 // Place the player object in a variable called player
 function getLevelInfo(level) {
     var levelInfo = {};
-    console.log("level = " + String(level));
+    //console.log("level = " + String(level));
     switch(level) {
         case 1:
             levelInfo = {
@@ -179,64 +190,70 @@ function getLevelInfo(level) {
                 "topLane" : {
                     "xLocs" : [100, 300],
                     "yLoc" : 65,
-                    "speed" : 70
+                    "speed" : 75
                 },
                 "middleLane" : {
                     "xLocs" : [200, 400],
                     "yLoc" : 145,
-                    "speed" : 30
+                    "speed" : 35
                 },
                 "bottomLane" : {
                     "xLocs" : [0, 100],
                     "yLoc" : 225,
-                    "speed" : 50
+                    "speed" : 55
                 }
             }
         break;
         case 3:
             levelInfo = {
                 "topLane" : {
-                    "xLocs" : [100, 300],
+                    "xLocs" : [100, 300, 500],
                     "yLoc" : 65,
-                    "speed" : 80
+                    "speed" : 90
                 },
                 "middleLane" : {
-                    "xLocs" : [200, 400],
+                    "xLocs" : [100, 200, 400],
                     "yLoc" : 145,
-                    "speed" : 40
+                    "speed" : 50
                 },
                 "bottomLane" : {
-                    "xLocs" : [0, 100],
+                    "xLocs" : [0, 100, 300],
                     "yLoc" : 225,
-                    "speed" : 60
+                    "speed" : 70
                 }
             }
     }
-    //console.log(levelInfo);
+    console.log(levelInfo);
     return levelInfo;
 }
 
 function makeEnemies(allEnemies, level) {
+    console.log(allEnemies);
     var levelInfo = getLevelInfo(level);
 
     for (i = 0; i < levelInfo.topLane.xLocs.length; i++) {
+        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.topLane.xLocs[i],
             levelInfo.topLane.yLoc,
             levelInfo.topLane.speed);
     }
     for (i = 0; i < levelInfo.middleLane.xLocs.length; i++) {
+        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.middleLane.xLocs[i],
             levelInfo.middleLane.yLoc,
             levelInfo.middleLane.speed);
     }
     for (i = 0; i < levelInfo.bottomLane.xLocs.length; i++) {
+        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.bottomLane.xLocs[i],
             levelInfo.bottomLane.yLoc,
             levelInfo.bottomLane.speed);
     }
+    console.log(allEnemies);
+
 }
 
 var gameLevel = 1;
