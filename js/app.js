@@ -1,3 +1,30 @@
+// Sound class
+var Sound = function(mp3FilePath) {
+    this.audio = new Audio(mp3FilePath);
+    console.log("new sound '" + mp3FilePath + "' created");
+}
+
+Sound.prototype.play = function() {
+    console.log("play " + this.src);
+    this.audio.play();
+}
+
+Sound.prototype.pause = function() {
+    this.audio.pause();
+}
+
+Sound.prototype.loop = function() {
+    this.audio.loop = true;
+}
+
+var GameSounds = function() {
+    this.background = new Sound("sounds/autumn.mp3");
+    this.youWin = new Sound("sounds/you_win.mp3");
+    this.youLose = new Sound("sounds/you_lose.mp3");
+}
+
+
+
 // Enemies our player must avoid
 var Enemy = function(xCoord, yCoord, speed) {
     // Variables applied to each of our instances go here,
@@ -60,6 +87,7 @@ Player.prototype.update = function(dt) {
 
 Player.prototype.checkGameStatus = function(allEnemies){
     isCollision = false;
+    collision = new Audio("sounds/collision1.mp3");
 
     for(i = 0; i < allEnemies.length; i++){
 
@@ -68,6 +96,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
+                    collision.play();
                     isCollision = true;
                 }
             }
@@ -77,6 +106,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
+                    collision.play();
                     isCollision = true;
                 }
             }
@@ -86,6 +116,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
                     console.log("Collision!");
+                    collision.play();
                     isCollision = true;
                 }
             }
@@ -95,8 +126,12 @@ Player.prototype.checkGameStatus = function(allEnemies){
             if(gameLevel == 3) {
                 //console.log("you made it!");
                 document.getElementById("game_status").innerHTML = "YOU WIN!";
-                document.getElementById("play_again").innerHTML = "<p>Refresh the page to play again.";
+                document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
                 this.isWinner = true;
+                gameSounds.background.pause();
+                gameSounds.youWin.play();
+                return game_over;
+
             }else {
                 //up the level and restart player
                 gameLevel = gameLevel + 1;
@@ -119,6 +154,9 @@ Player.prototype.checkGameStatus = function(allEnemies){
             document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
             document.getElementById("game_status").innerHTML = "GAME OVER!";
             document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
+            //ctrlBgSound("pause");
+            gameSounds.background.pause();
+            gameSounds.youLose.play();
             return game_over;
         }
         document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
@@ -131,31 +169,47 @@ Player.prototype.render = function() {
 }
 
 Player.prototype.handleInput = function(key) {
+    jump = new Audio("sounds/jump.mp3");
+    bumpEdge = new Audio("sounds/blocked.mp3");
+
     if(this.isWinner == true) {
         return;
     }
     switch(key) {
         case 'left' :
             if (this.x < 0){
-                //play bump sound & do nothing
-                console.log("Bump!");
+                //play blocked sound & do nothing
+                bumpEdge.play();
+                console.log("Blocked");
             }else{
-            this.x -= 100;
+                jump.play();
+                this.x -= 100;
             }
             break;
         case 'right' :
             if (this.x > 390){
-                //play bump sound & do nothing
-                console.log("Bump!");
+                //play blocked sound & do nothing
+                bumpEdge.play();
+                console.log("Blocked!");
             }else{
+                jump.play();
                 this.x += 100;
             }
             break;
         case 'up' :
+            jump.play();
             this.y -= 83;
             break;
         case 'down' :
-            this.y += 83;
+            if (this.y == 409){
+                //play blocked sound & do nothing
+                bumpEdge.play();
+                console.log("Blocked!");
+            }else{
+                jump.play();
+                this.y += 83;
+            }
+            break;
     }
 }
 

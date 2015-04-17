@@ -14,6 +14,22 @@
  * a little simpler to work with.
  */
 
+    /* This function ...
+function ctrlBgSound(option){
+    //options: play, pause
+    var backgroundSound = document.getElementById("backgroundSound");
+    console.log(backgroundSound);
+    switch(option) {
+    case 'play' :
+        backgroundSound.play();
+        break;
+    case 'pause' :
+        backgroundSound.pause();
+        break;
+    }
+}
+    */
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -63,17 +79,23 @@ var Engine = (function(global) {
         win.requestAnimationFrame(main);
     };
 
+
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
-     */
+   */
     function init() {
         //console.log("here1");
         reset();
         lastTime = Date.now();
         //console.log(lastTime);
+        //ctrlBgSound("play");
+        gameSounds = new GameSounds();
+        gameSounds.background.play();
+        gameSounds.background.loop();
         main();
     }
+
 
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
