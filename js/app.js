@@ -1,11 +1,9 @@
-// Sound class
+// Sound classes
 var Sound = function(mp3FilePath) {
     this.audio = new Audio(mp3FilePath);
-    console.log("new sound '" + mp3FilePath + "' created");
 }
 
 Sound.prototype.play = function() {
-    console.log("play " + this.src);
     this.audio.play();
 }
 
@@ -24,7 +22,6 @@ var GameSounds = function() {
 }
 
 
-
 // Enemies our player must avoid
 var Enemy = function(xCoord, yCoord, speed) {
     // Variables applied to each of our instances go here,
@@ -38,10 +35,8 @@ var Enemy = function(xCoord, yCoord, speed) {
     this.width = 101;
     this.height = 171;
     this.speed = speed;
-
-    //TODO:  make this.speed random variable within a range
-    //of values
 }
+
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -59,6 +54,7 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+
 Enemy.prototype.restart = function() {
     if (this.x > 500) {
         this.x = -100;
@@ -66,8 +62,6 @@ Enemy.prototype.restart = function() {
 }
 
 
-
-// Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
@@ -80,6 +74,7 @@ var Player = function() {
     this.isWinner = false;
 }
 
+
 Player.prototype.update = function(dt) {
     this.checkGameStatus(allEnemies);
 }
@@ -90,7 +85,6 @@ Player.prototype.checkGameStatus = function(allEnemies){
     collision = new Audio("sounds/collision1.mp3");
 
     for(i = 0; i < allEnemies.length; i++){
-
         if ((this.y < 326 && this.y >= 243) && (allEnemies[i].y + 50 < 326 && allEnemies[i].y + 50 >= 243) ) {
             //console.log("in bottom lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
@@ -154,7 +148,6 @@ Player.prototype.checkGameStatus = function(allEnemies){
             document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
             document.getElementById("game_status").innerHTML = "GAME OVER!";
             document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
-            //ctrlBgSound("pause");
             gameSounds.background.pause();
             gameSounds.youLose.play();
             return game_over;
@@ -180,7 +173,6 @@ Player.prototype.handleInput = function(key) {
             if (this.x < 0){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-                console.log("Blocked");
             }else{
                 jump.play();
                 this.x -= 100;
@@ -190,7 +182,6 @@ Player.prototype.handleInput = function(key) {
             if (this.x > 390){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-                console.log("Blocked!");
             }else{
                 jump.play();
                 this.x += 100;
@@ -204,7 +195,6 @@ Player.prototype.handleInput = function(key) {
             if (this.y == 409){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-                console.log("Blocked!");
             }else{
                 jump.play();
                 this.y += 83;
@@ -218,7 +208,6 @@ Player.prototype.handleInput = function(key) {
 // Place the player object in a variable called player
 function getLevelInfo(level) {
     var levelInfo = {};
-    //console.log("level = " + String(level));
     switch(level) {
         case 1:
             levelInfo = {
@@ -277,37 +266,30 @@ function getLevelInfo(level) {
                 }
             }
     }
-    console.log(levelInfo);
     return levelInfo;
 }
 
 function makeEnemies(allEnemies, level) {
-    console.log(allEnemies);
     var levelInfo = getLevelInfo(level);
 
     for (i = 0; i < levelInfo.topLane.xLocs.length; i++) {
-        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.topLane.xLocs[i],
             levelInfo.topLane.yLoc,
             levelInfo.topLane.speed);
     }
     for (i = 0; i < levelInfo.middleLane.xLocs.length; i++) {
-        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.middleLane.xLocs[i],
             levelInfo.middleLane.yLoc,
             levelInfo.middleLane.speed);
     }
     for (i = 0; i < levelInfo.bottomLane.xLocs.length; i++) {
-        console.log(allEnemies.length);
         allEnemies[allEnemies.length] = new Enemy(
             levelInfo.bottomLane.xLocs[i],
             levelInfo.bottomLane.yLoc,
             levelInfo.bottomLane.speed);
     }
-    console.log(allEnemies);
-
 }
 
 var gameLevel = 1;
