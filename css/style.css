@@ -3,11 +3,10 @@ body {
 }
 
 p {
-	font-weight: bold;
-	font-size: 18px;
+	font: bold 18px;
 }
 
-#game_status {
+#game-status {
 	color: red;
 	font-size: 24px;
 	margin: 12px;

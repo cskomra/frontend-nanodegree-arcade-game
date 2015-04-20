@@ -1,25 +1,25 @@
 // Sound classes
 var Sound = function(mp3FilePath) {
     this.audio = new Audio(mp3FilePath);
-}
+};
 
 Sound.prototype.play = function() {
     this.audio.play();
-}
+};
 
 Sound.prototype.pause = function() {
     this.audio.pause();
-}
+};
 
 Sound.prototype.loop = function() {
     this.audio.loop = true;
-}
+};
 
 var GameSounds = function() {
     this.background = new Sound("sounds/autumn.mp3");
     this.youWin = new Sound("sounds/you_win.mp3");
     this.youLose = new Sound("sounds/you_lose.mp3");
-}
+};
 
 
 // Enemies our player must avoid
@@ -36,7 +36,7 @@ var Enemy = function(xCoord, yCoord, speed) {
     this.height = 171;
     this.speed = speed;
     //console.log("enemy - x:" + this.x + "; y: " + this.y + "; speed: " + this.speed);
-}
+};
 
 
 // Update the enemy's position, required method for game
@@ -48,49 +48,52 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + (dt * this.speed);
     this.restart(dt);
     this.render();
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 
 Enemy.prototype.restart = function() {
     if (this.x > 500) {
         this.x = -100;
     }
-}
+};
 
 
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = "images/char-boy.png";
+    this.sprite = 'images/char-boy.png';
     this.width = 101;
     this.height = 171;
     this.x = 250 - Math.round((this.width / 2));
     this.y = 530 - (this.height - 50);
     this.livesRemaining = 3;
     this.isWinner = false;
-}
+};
 
 
 Player.prototype.update = function(dt) {
     this.checkGameStatus(allEnemies);
-}
+};
 
 
 Player.prototype.checkGameStatus = function(allEnemies){
-    isCollision = false;
-    collision = new Audio("sounds/collision1.mp3");
+    var isCollision = false;
+    collision = new Audio('sounds/collision1.mp3');
+    PLAY_AGAIN_BUTTON = '<button id="btn" onclick="window.location.href = window.location.href;">Play Again</button>';
+    YOU_WIN_MSG = 'YOU WIN!';
+    YOU_LOSE_MSG = 'GAME OVER!';
 
     //check for collision
-    for(i = 0; i < allEnemies.length; i++){
+    for (var i = 0; i < allEnemies.length; i++){
         if ((this.y < 326 && this.y >= 243) && (allEnemies[i].y + 50 < 326 && allEnemies[i].y + 50 >= 243) ) {
             //console.log("in bottom lane");
-            for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
-                if ( x > this.x && x < (this.x + this.width)) {
+            for (var x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
+                if (x > this.x && x < (this.x + this.width)) {
                     //console.log("Collision!");
                     collision.play();
                     isCollision = true;
@@ -99,8 +102,8 @@ Player.prototype.checkGameStatus = function(allEnemies){
         }
         if ((this.y < 243 && this.y >= 160) && (allEnemies[i].y + 50 < 243 && allEnemies[i].y + 50 >= 160) ) {
             //console.log("in middle lane");
-            for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
-                if ( x > this.x && x < (this.x + this.width)) {
+            for (var x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
+                if (x > this.x && x < (this.x + this.width)) {
                     //console.log("Collision!");
                     collision.play();
                     isCollision = true;
@@ -109,8 +112,8 @@ Player.prototype.checkGameStatus = function(allEnemies){
         }
         if ((this.y < 160 && this.y >= 77) && (allEnemies[i].y + 50 < 160 && allEnemies[i].y + 50 >= 77) ) {
             //console.log("in top lane");
-            for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
-                if ( x > this.x && x < (this.x + this.width)) {
+            for (var x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
+                if (x > this.x && x < (this.x + this.width)) {
                     //console.log("Collision!");
                     collision.play();
                     isCollision = true;
@@ -121,15 +124,14 @@ Player.prototype.checkGameStatus = function(allEnemies){
         //check for a WIN or Next Level
         if (this.y < 77) {
 
-            if(gameLevel.level == 3) {
-                document.getElementById("game_status").innerHTML = "YOU WIN!";
-                document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
+            if (gameLevel.level == 3) {
+                document.getElementById('game-status').innerHTML = YOU_WIN_MSG;
+                document.getElementById('play-again').innerHTML = PLAY_AGAIN_BUTTON;
                 this.isWinner = true;
                 gameSounds.background.pause();
                 gameSounds.youWin.play();
                 return game_over;
-
-            }else {
+            } else {
                 //up the level and restart player
                 gameLevel.updateLevel();
                 this.x = 250 - Math.round((this.width / 2));
@@ -146,27 +148,27 @@ Player.prototype.checkGameStatus = function(allEnemies){
 
         if (this.livesRemaining == 0) {
             //"GAME OVER"
-            document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
-            document.getElementById("game_status").innerHTML = "GAME OVER!";
-            document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
+            document.getElementById('lives-remaining').innerHTML = String(this.livesRemaining);
+            document.getElementById('game-status').innerHTML = YOU_LOSE_MSG;
+            document.getElementById('play-again').innerHTML = PLAY_AGAIN_BUTTON;
             gameSounds.background.pause();
             gameSounds.youLose.play();
             return game_over;
         }
-        document.getElementById("lives_remaining").innerHTML = String(this.livesRemaining);
+        document.getElementById("lives-remaining").innerHTML = String(this.livesRemaining);
     }
-}
+};
 
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 Player.prototype.handleInput = function(key) {
-    jump = new Audio("sounds/jump.mp3");
-    bumpEdge = new Audio("sounds/blocked.mp3");
+    var jump = new Audio("sounds/jump.mp3");
+    var bumpEdge = new Audio("sounds/blocked.mp3");
 
-    if(this.isWinner == true) {
+    if (this.isWinner == true) {
         return;
     }
     switch(key) {
@@ -174,7 +176,7 @@ Player.prototype.handleInput = function(key) {
             if (this.x < 0){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-            }else{
+            } else {
                 jump.play();
                 this.x -= 100;
             }
@@ -183,7 +185,7 @@ Player.prototype.handleInput = function(key) {
             if (this.x > 390){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-            }else{
+            } else {
                 jump.play();
                 this.x += 100;
             }
@@ -196,13 +198,13 @@ Player.prototype.handleInput = function(key) {
             if (this.y == 409){
                 //play blocked sound & do nothing
                 bumpEdge.play();
-            }else{
+            } else {
                 jump.play();
                 this.y += 83;
             }
             break;
     }
-}
+};
 
 var GameLevel = function(){
     this.level = 0;
@@ -211,17 +213,12 @@ var GameLevel = function(){
 
 GameLevel.prototype.updateLevel = function(){
     this.level = this.level + 1;
-    document.getElementById("game_level").innerHTML = this.level;
+    document.getElementById("game-level").innerHTML = this.level;
     this.makeEnemies();
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
 
 GameLevel.prototype.makeEnemies = function() {
-    var enemyInfo = {};
     function getEnemyInfo(level) {
         var enemyInfo = {};
         switch(level) {
@@ -242,7 +239,7 @@ GameLevel.prototype.makeEnemies = function() {
                         "yLoc" : 225,
                         "speed" : 40
                     }
-                }
+                };
             break;
             case 2:
                 enemyInfo = {
@@ -261,7 +258,7 @@ GameLevel.prototype.makeEnemies = function() {
                         "yLoc" : 225,
                         "speed" : 55
                     }
-                }
+                };
             break;
             case 3:
                 enemyInfo = {
@@ -286,30 +283,31 @@ GameLevel.prototype.makeEnemies = function() {
     }
 
     allEnemies = [];
-    //console.log("this.level = " + this.level);
     enemyInfo = getEnemyInfo(this.level);
-    //console.log(enemyInfo);
 
-    for (i = 0; i < enemyInfo.topLane.xLocs.length; i++) {
+    for (var i = 0; i < enemyInfo.topLane.xLocs.length; i++) {
         allEnemies[allEnemies.length] = new Enemy(
             enemyInfo.topLane.xLocs[i],
             enemyInfo.topLane.yLoc,
             enemyInfo.topLane.speed);
     }
-    for (i = 0; i < enemyInfo.middleLane.xLocs.length; i++) {
+    for (var i = 0; i < enemyInfo.middleLane.xLocs.length; i++) {
         allEnemies[allEnemies.length] = new Enemy(
             enemyInfo.middleLane.xLocs[i],
             enemyInfo.middleLane.yLoc,
             enemyInfo.middleLane.speed);
     }
-    for (i = 0; i < enemyInfo.bottomLane.xLocs.length; i++) {
+    for (var i = 0; i < enemyInfo.bottomLane.xLocs.length; i++) {
         allEnemies[allEnemies.length] = new Enemy(
             enemyInfo.bottomLane.xLocs[i],
             enemyInfo.bottomLane.yLoc,
             enemyInfo.bottomLane.speed);
     }
-}
+};
 
+// Now instantiate your objects.
+// Place all enemy objects in an array called allEnemies
+// Place the player object in a variable called player
 var allEnemies = [];
 var gameLevel = new GameLevel();
 var player = new Player();
@@ -324,4 +322,4 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
     player.handleInput(allowedKeys[e.keyCode]);
-});
+})
