@@ -35,6 +35,7 @@ var Enemy = function(xCoord, yCoord, speed) {
     this.width = 101;
     this.height = 171;
     this.speed = speed;
+    //console.log("enemy - x:" + this.x + "; y: " + this.y + "; speed: " + this.speed);
 }
 
 
@@ -84,12 +85,13 @@ Player.prototype.checkGameStatus = function(allEnemies){
     isCollision = false;
     collision = new Audio("sounds/collision1.mp3");
 
+    //check for collision
     for(i = 0; i < allEnemies.length; i++){
         if ((this.y < 326 && this.y >= 243) && (allEnemies[i].y + 50 < 326 && allEnemies[i].y + 50 >= 243) ) {
             //console.log("in bottom lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
-                    console.log("Collision!");
+                    //console.log("Collision!");
                     collision.play();
                     isCollision = true;
                 }
@@ -99,7 +101,7 @@ Player.prototype.checkGameStatus = function(allEnemies){
             //console.log("in middle lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
-                    console.log("Collision!");
+                    //console.log("Collision!");
                     collision.play();
                     isCollision = true;
                 }
@@ -109,16 +111,17 @@ Player.prototype.checkGameStatus = function(allEnemies){
             //console.log("in top lane");
             for ( x = allEnemies[i].x; x <= (allEnemies[i].x + allEnemies[i].width); x++){
                 if ( x > this.x && x < (this.x + this.width)) {
-                    console.log("Collision!");
+                    //console.log("Collision!");
                     collision.play();
                     isCollision = true;
                 }
             }
         }
+
+        //check for a WIN or Next Level
         if (this.y < 77) {
 
-            if(gameLevel == 3) {
-                //console.log("you made it!");
+            if(gameLevel.level == 3) {
                 document.getElementById("game_status").innerHTML = "YOU WIN!";
                 document.getElementById("play_again").innerHTML = "<button id='btn' onclick='window.location.href = window.location.href;''>Play Again</button>";
                 this.isWinner = true;
@@ -128,16 +131,14 @@ Player.prototype.checkGameStatus = function(allEnemies){
 
             }else {
                 //up the level and restart player
-                gameLevel = gameLevel + 1;
-                document.getElementById("game_level").innerHTML = gameLevel;
+                gameLevel.updateLevel();
                 this.x = 250 - Math.round((this.width / 2));
                 this.y = 530 - (this.height - 50);
-                allEnemies = [];
-                makeEnemies(allEnemies, gameLevel);
             }
-
         }
     }
+
+    //if collision, update lives and check for a LOSS
     if (isCollision == true) {
         this.x = 250 - Math.round((this.width / 2));
         this.y = 530 - (this.height - 50);
@@ -203,98 +204,114 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
+var GameLevel = function(){
+    this.level = 0;
+    this.updateLevel();
+};
+
+GameLevel.prototype.updateLevel = function(){
+    this.level = this.level + 1;
+    document.getElementById("game_level").innerHTML = this.level;
+    this.makeEnemies();
+};
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-function getLevelInfo(level) {
-    var levelInfo = {};
-    switch(level) {
-        case 1:
-            levelInfo = {
-                "topLane" : {
-                    "xLocs" : [100, 300],
-                    "yLoc" : 65,
-                    "speed" : 60
-                },
-                "middleLane" : {
-                    "xLocs" : [200, 400],
-                    "yLoc" : 145,
-                    "speed" : 20
-                },
-                "bottomLane" : {
-                    "xLocs" : [0, 100],
-                    "yLoc" : 225,
-                    "speed" : 40
+
+
+GameLevel.prototype.makeEnemies = function() {
+    var enemyInfo = {};
+    function getEnemyInfo(level) {
+        var enemyInfo = {};
+        switch(level) {
+            case 1:
+                enemyInfo = {
+                    "topLane" : {
+                        "xLocs" : [100, 300],
+                        "yLoc" : 65,
+                        "speed" : 60
+                    },
+                    "middleLane" : {
+                        "xLocs" : [200, 400],
+                        "yLoc" : 145,
+                        "speed" : 20
+                    },
+                    "bottomLane" : {
+                        "xLocs" : [0, 100],
+                        "yLoc" : 225,
+                        "speed" : 40
+                    }
                 }
-            }
-        break;
-        case 2:
-            levelInfo = {
-                "topLane" : {
-                    "xLocs" : [100, 300],
-                    "yLoc" : 65,
-                    "speed" : 75
-                },
-                "middleLane" : {
-                    "xLocs" : [200, 400],
-                    "yLoc" : 145,
-                    "speed" : 35
-                },
-                "bottomLane" : {
-                    "xLocs" : [0, 100],
-                    "yLoc" : 225,
-                    "speed" : 55
+            break;
+            case 2:
+                enemyInfo = {
+                    "topLane" : {
+                        "xLocs" : [100, 300],
+                        "yLoc" : 65,
+                        "speed" : 75
+                    },
+                    "middleLane" : {
+                        "xLocs" : [200, 400],
+                        "yLoc" : 145,
+                        "speed" : 35
+                    },
+                    "bottomLane" : {
+                        "xLocs" : [0, 100],
+                        "yLoc" : 225,
+                        "speed" : 55
+                    }
                 }
-            }
-        break;
-        case 3:
-            levelInfo = {
-                "topLane" : {
-                    "xLocs" : [100, 300, 500],
-                    "yLoc" : 65,
-                    "speed" : 90
-                },
-                "middleLane" : {
-                    "xLocs" : [100, 200, 400],
-                    "yLoc" : 145,
-                    "speed" : 50
-                },
-                "bottomLane" : {
-                    "xLocs" : [0, 100, 300],
-                    "yLoc" : 225,
-                    "speed" : 70
+            break;
+            case 3:
+                enemyInfo = {
+                    "topLane" : {
+                        "xLocs" : [300, 500],
+                        "yLoc" : 65,
+                        "speed" : 90
+                    },
+                    "middleLane" : {
+                        "xLocs" : [100, 200, 400],
+                        "yLoc" : 145,
+                        "speed" : 50
+                    },
+                    "bottomLane" : {
+                        "xLocs" : [0, 200],
+                        "yLoc" : 225,
+                        "speed" : 70
+                    }
                 }
-            }
+        }
+        return enemyInfo;
     }
-    return levelInfo;
+
+    allEnemies = [];
+    //console.log("this.level = " + this.level);
+    enemyInfo = getEnemyInfo(this.level);
+    //console.log(enemyInfo);
+
+    for (i = 0; i < enemyInfo.topLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            enemyInfo.topLane.xLocs[i],
+            enemyInfo.topLane.yLoc,
+            enemyInfo.topLane.speed);
+    }
+    for (i = 0; i < enemyInfo.middleLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            enemyInfo.middleLane.xLocs[i],
+            enemyInfo.middleLane.yLoc,
+            enemyInfo.middleLane.speed);
+    }
+    for (i = 0; i < enemyInfo.bottomLane.xLocs.length; i++) {
+        allEnemies[allEnemies.length] = new Enemy(
+            enemyInfo.bottomLane.xLocs[i],
+            enemyInfo.bottomLane.yLoc,
+            enemyInfo.bottomLane.speed);
+    }
 }
 
-function makeEnemies(allEnemies, level) {
-    var levelInfo = getLevelInfo(level);
-
-    for (i = 0; i < levelInfo.topLane.xLocs.length; i++) {
-        allEnemies[allEnemies.length] = new Enemy(
-            levelInfo.topLane.xLocs[i],
-            levelInfo.topLane.yLoc,
-            levelInfo.topLane.speed);
-    }
-    for (i = 0; i < levelInfo.middleLane.xLocs.length; i++) {
-        allEnemies[allEnemies.length] = new Enemy(
-            levelInfo.middleLane.xLocs[i],
-            levelInfo.middleLane.yLoc,
-            levelInfo.middleLane.speed);
-    }
-    for (i = 0; i < levelInfo.bottomLane.xLocs.length; i++) {
-        allEnemies[allEnemies.length] = new Enemy(
-            levelInfo.bottomLane.xLocs[i],
-            levelInfo.bottomLane.yLoc,
-            levelInfo.bottomLane.speed);
-    }
-}
-
-var gameLevel = 1;
 var allEnemies = [];
-makeEnemies(allEnemies, gameLevel);
+var gameLevel = new GameLevel();
 var player = new Player();
 
 // This listens for key presses and sends the keys to your
