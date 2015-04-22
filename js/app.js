@@ -15,6 +15,7 @@ Sound.prototype.loop = function() {
     this.audio.loop = true;
 };
 
+
 var GameSounds = function() {
     this.background = new Sound("sounds/autumn.mp3");
     this.youWin = new Sound("sounds/you_win.mp3");
@@ -38,7 +39,6 @@ var Enemy = function(xCoord, yCoord, speed) {
     //console.log("enemy - x:" + this.x + "; y: " + this.y + "; speed: " + this.speed);
 };
 
-
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
@@ -54,7 +54,6 @@ Enemy.prototype.update = function(dt) {
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
 
 Enemy.prototype.restart = function() {
     if (this.x > 500) {
@@ -72,21 +71,33 @@ var Player = function() {
     this.x = 250 - Math.round((this.width / 2));
     this.y = 530 - (this.height - 50);
     this.livesRemaining = 3;
-    this.isWinner = false;
+    this.gameOn = true;
 };
-
 
 Player.prototype.update = function(dt) {
     this.checkGameStatus(allEnemies);
 };
 
-
 Player.prototype.checkGameStatus = function(allEnemies){
     var isCollision = false;
     collision = new Audio('sounds/collision1.mp3');
-    PLAY_AGAIN_BUTTON = '<button id="btn" onclick="window.location.href = window.location.href;">Play Again</button>';
-    YOU_WIN_MSG = 'YOU WIN!';
-    YOU_LOSE_MSG = 'GAME OVER!';
+
+    //adjust environment according to game status
+    //called by checkGameStatus when game is over
+    function adjustGameEnv(status) {
+        gameSounds.background.pause();
+        document.getElementById('play-again').innerHTML = '<button id="btn" onclick="window.location.href = window.location.href;">Play Again</button>';
+
+        if (status == 'winner') {
+            document.getElementById('game-status').innerHTML = 'YOU WIN!';
+            gameSounds.youWin.play();
+        }
+        if (status == 'loser') {
+            document.getElementById('lives-remaining').innerHTML = String(this.livesRemaining);
+            document.getElementById('game-status').innerHTML = 'GAME OVER!';
+            gameSounds.youLose.play();
+        }
+    }
 
     //check for collision
     for (var i = 0; i < allEnemies.length; i++){
@@ -123,14 +134,9 @@ Player.prototype.checkGameStatus = function(allEnemies){
 
         //check for a WIN or Next Level
         if (this.y < 77) {
-
             if (gameLevel.level == 3) {
-                document.getElementById('game-status').innerHTML = YOU_WIN_MSG;
-                document.getElementById('play-again').innerHTML = PLAY_AGAIN_BUTTON;
-                this.isWinner = true;
-                gameSounds.background.pause();
-                gameSounds.youWin.play();
-                return game_over;
+                adjustGameEnv('winner');
+                this.gameOn = false;
             } else {
                 //up the level and restart player
                 gameLevel.updateLevel();
@@ -147,13 +153,8 @@ Player.prototype.checkGameStatus = function(allEnemies){
         this.livesRemaining = this.livesRemaining-1;
 
         if (this.livesRemaining == 0) {
-            //"GAME OVER"
-            document.getElementById('lives-remaining').innerHTML = String(this.livesRemaining);
-            document.getElementById('game-status').innerHTML = YOU_LOSE_MSG;
-            document.getElementById('play-again').innerHTML = PLAY_AGAIN_BUTTON;
-            gameSounds.background.pause();
-            gameSounds.youLose.play();
-            return game_over;
+            adjustGameEnv('loser');
+            this.gameOn = false;
         }
         document.getElementById("lives-remaining").innerHTML = String(this.livesRemaining);
     }
@@ -164,11 +165,12 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+
 Player.prototype.handleInput = function(key) {
     var jump = new Audio("sounds/jump.mp3");
     var bumpEdge = new Audio("sounds/blocked.mp3");
 
-    if (this.isWinner == true) {
+    if (this.gameOn == false) {
         return;
     }
     switch(key) {
@@ -208,8 +210,8 @@ Player.prototype.handleInput = function(key) {
 
 
 /*The GameLevel class manages and tracks which level the Player is on
-and updates game play at each new level with new enemies (including new
-enemy: objects, locations, and speeds)*/
+* and updates game play at each new level with new enemies (including new
+* enemy: objects, locations, and speeds)*/
 var GameLevel = function(){
     this.level = 0;
     this.updateLevel();
@@ -328,4 +330,4 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
     player.handleInput(allowedKeys[e.keyCode]);
-})
+});

@@ -14,21 +14,6 @@
  * a little simpler to work with.
  */
 
-    /* This function ...
-function ctrlBgSound(option){
-    //options: play, pause
-    var backgroundSound = document.getElementById("backgroundSound");
-    console.log(backgroundSound);
-    switch(option) {
-    case 'play' :
-        backgroundSound.play();
-        break;
-    case 'pause' :
-        backgroundSound.pause();
-        break;
-    }
-}
-    */
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -55,12 +40,15 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
+
+         // Do not continue to run main() if game is over
+         if (player.gameOn == false) {
+            return;
+         }
+
+
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
-
-        //console.log("here3");
-        //console.log("dt");
-        //console.log(dt);
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
@@ -85,11 +73,8 @@ var Engine = (function(global) {
      * game loop.
    */
     function init() {
-        //console.log("here1");
         reset();
         lastTime = Date.now();
-        //console.log(lastTime);
-        //ctrlBgSound("play");
         gameSounds = new GameSounds();
         gameSounds.background.play();
         gameSounds.background.loop();
@@ -107,9 +92,7 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        //console.log("here4");
         updateEntities(dt);
-        // checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -120,12 +103,8 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        //console.log("here5");
-        //console.log(allEnemies);
         allEnemies.forEach(function(enemy) {
-            //console.log("here6");
-            //console.log(enemy);
-            enemy.update(dt);  //app.js
+            enemy.update(dt);
         });
         player.update();
     }
@@ -194,7 +173,6 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
-        //console.log("here2");
     }
 
     /* Go ahead and load all of the images we know we're going to need to
