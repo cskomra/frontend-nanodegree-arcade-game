@@ -206,6 +206,10 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+
+/*The GameLevel class manages and tracks which level the Player is on
+and updates game play at each new level with new enemies (including new
+enemy: objects, locations, and speeds)*/
 var GameLevel = function(){
     this.level = 0;
     this.updateLevel();
@@ -217,7 +221,7 @@ GameLevel.prototype.updateLevel = function(){
     this.makeEnemies();
 };
 
-
+//create enemy objects for each corresponding level
 GameLevel.prototype.makeEnemies = function() {
     function getEnemyInfo(level) {
         var enemyInfo = {};
@@ -282,9 +286,11 @@ GameLevel.prototype.makeEnemies = function() {
         return enemyInfo;
     }
 
+    //reset allEnemies[] to prepare for new level enemies
     allEnemies = [];
     enemyInfo = getEnemyInfo(this.level);
 
+    //use enemyInfo as data input to create new level enemies
     for (var i = 0; i < enemyInfo.topLane.xLocs.length; i++) {
         allEnemies[allEnemies.length] = new Enemy(
             enemyInfo.topLane.xLocs[i],
